@@ -10,7 +10,7 @@ INSERT INTO roles (title, salary, department_id)
 VALUES
     ('Driver', 10000000.00, 1),
     ('Test Driver', 2000000.00, 1),
-    ('Team Principal', 1000000.00, 2)
+    ('Team Principal', 1000000.00, 2),
     ('Performance Engineer', 150000.00, 2),
     ('Trackside Engineer', 120000.00, 2),
     ('Car Mechanic', 80000.00, 2),
@@ -23,7 +23,7 @@ VALUES
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES
-    ('Toto', 'Wolff', 3, NULL)
+    ('Toto', 'Wolff', 3, NULL),
     ('Sebastian', 'Vettel', 1, 1),
     ('Kimi', 'Raikkonen', 1, 1),
     ('Adrian', 'Newey', 4, 1),

@@ -27,3 +27,7 @@ SELECT employee.id, employee.first_name, employee.last_name, roles.title, depart
   INNER JOIN department ON (department.id = roles.department_id)
   WHERE department.name = 'ENGINEERING'
   ORDER BY employee.id;
+
+Add a department:
+INSERT INTO department(name)
+  VALUES(NUTRITION);

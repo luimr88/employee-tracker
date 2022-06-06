@@ -10,6 +10,8 @@
   [Contributions](#contributions)
 
   [Testing](#testing)
+  
+  [Video/Screenshot](#video/screenshot)
 
   [GitHub Repo](#github-repository)
 
@@ -29,7 +31,10 @@
   ## Testing
   Before starting the application make sure that the tables are seeded in mysql. To enter mysql type "mysql -u root -p", which will prompt the user to enter their mysql password. After that in mysql type "source db/db.sql", "source db/schema.sql", and "source db/seeds.sql" (in that exact order). Once those steps are completed and you exit mysql by typing "quit", proceed to using the application in the command line using "node index.js".
 
-  
+  ## Video/Screenshot
+  ![README md - employee-tracker - Visual Studio Code 6_6_2022 3_19_13 PM](https://user-images.githubusercontent.com/78315917/172251541-05bf48ca-6a9f-4f4d-9fea-95bec3f97216.png)
+
+  Video Link: https://www.youtube.com/watch?v=K4HbHOfqKJE
 
   ## GitHub Repository
   Link: https://github.com/luimr88/employee-tracker

@@ -1,4 +1,5 @@
 const mysql = require('mysql2');
+const figlet = require('figlet');
 
 // Connect to database
 const db = mysql.createConnection(
@@ -10,7 +11,8 @@ const db = mysql.createConnection(
         password: 'LightsOut11!',
         database: 'employees'
     },
-    console.log('Connected to employee database.')
+    console.log('Connected to employee database.'),
+    console.log(figlet.textSync('Employee Tracker'))
 );
 
 module.exports = db;

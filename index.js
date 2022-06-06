@@ -6,6 +6,7 @@ function openingPrompt() {
     inquirer.prompt([
         {
             type: 'list',
+            pageSize:10,
             name: 'intro',
             message: 'Please select an option:',
             choices:[
@@ -13,9 +14,12 @@ function openingPrompt() {
                 'View all roles',
                 'View all employees',
                 'View employees by department',
+                'View employees by manager',
                 'Add a department',
                 'Add a role',
-                'Add an employee'
+                'Add an employee',
+                'Update employee role',
+                'Exit'
             ]
         }
     ])
@@ -33,6 +37,9 @@ function openingPrompt() {
             case 'View employees by department':
                 listByDepartment();
                 break;
+            case 'View employees by manager':
+                viewEmployeeManager()
+                break;
             case 'Add a department':
                 addNewDepartment();
                 break;
@@ -41,6 +48,12 @@ function openingPrompt() {
                 break;
             case 'Add an employee':
                 addEmployee();
+                break;
+            case 'Update employee role':
+                updateEmployee();
+                break;
+            case 'Exit':
+                endPrompt();
                 break;
         }
     });
@@ -55,6 +68,7 @@ function viewDepartments() {
             console.log(err);
             return;
         }
+        console.log(' ');
         console.table(res);
         openingPrompt();
     })
@@ -70,6 +84,7 @@ function viewRoles() {
             console.log(err);
             return;
         }
+        console.log(' ');
         console.table(res);
         openingPrompt();
     })
@@ -88,6 +103,7 @@ function viewEmployees() {
             console.log(err);
             return;
         }
+        console.log(' ');
         console.table(res);
         openingPrompt();
     })
@@ -120,6 +136,7 @@ function listByDepartment() {
                     console.log(err);
                     return;
                 }
+                console.log(' ');
                 console.table(res);
                 openingPrompt();
             });
@@ -144,7 +161,7 @@ function addNewDepartment() {
             }
         }
     ]).then((answer) => {
-        departmentList.push(answer.department);
+        //departmentList.push(answer.department);
         const sql = `INSERT INTO department(name)
         VALUES('${answer.department}');`
     
@@ -273,9 +290,94 @@ function addEmployee() {
                     viewEmployees();
                 });
             });
-        })
-        
-    })
+        });
+    });
+};
+
+function updateEmployee() {
+    const sql2 = `SELECT * FROM employee`;
+    db.query(sql2, (error, response) => {
+        employeeList = response.map(employees => ({
+            name: employees.first_name.concat(" ", employees.last_name),
+            value: employees.id
+        }))
+        const sql3 = `SELECT * FROM roles`;
+        db.query(sql3, (error, response) => {
+            roleList = response.map(roles => ({
+                name: roles.title,
+                value: roles.id
+            }))
+            return inquirer.prompt([
+                {
+                    type: 'list',
+                    name: 'employee',
+                    message: 'Which employee would you like to update?',
+                    choices: employeeList
+                },
+                {
+                    type: 'list',
+                    name: 'role',
+                    message: 'What new role do want to assign to this employee?',
+                    choices: roleList
+                },
+                {
+                    type: 'list',
+                    name: 'manager',
+                    message: 'Who will be the employees manager?',
+                    choices: employeeList
+                },
+                
+            ]).then((answers) => {
+                const sql = `UPDATE employee SET role_id= ${answers.role}, manager_id=${answers.manager} WHERE id =${answers.employee};`
+                db.query(sql, (err, res) => {
+                    if (err) {
+                        console.log(err);
+                        return;
+                    }
+                    viewEmployees();
+                });
+            });
+        });
+    });
+};
+
+function viewEmployeeManager() {
+    const sql2 = `SELECT * FROM employee`;
+    db.query(sql2, (error, response) => {
+        managerList = response.map(employees => ({
+            name: employees.first_name.concat(" ", employees.last_name),
+            value: employees.id
+        }))
+        return inquirer.prompt([
+            {
+                type: 'list',
+                name: 'manager',
+                message: 'Which manager would you like to sort employees by?',
+                choices: managerList
+            }
+        ]).then((answers) => {
+            const sql = `SELECT employee.id, employee.first_name, employee.last_name, roles.title, department.name AS department, roles.salary, CONCAT(manager.first_name, ' ', manager.last_name) AS manager
+            FROM employee
+            LEFT JOIN employee manager on manager.id = employee.manager_id
+            INNER JOIN roles ON (roles.id = employee.role_id)
+            INNER JOIN department ON (department.id = roles.department_id)
+            WHERE manager.id = ${answers.manager}
+            ORDER BY employee.id;`
+            db.query(sql, (err, res) => {
+                if (err) {
+                    console.log(err);
+                    return;
+                }
+                console.log(' ');
+                console.table(res);
+                openingPrompt();
+            });
+        });
+    });
 }
+
+function endPrompt() {
+    process.exit(0);
+};
 openingPrompt();
 

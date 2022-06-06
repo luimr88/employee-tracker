@@ -34,3 +34,11 @@ INSERT INTO department(name)
 
 INSERT INTO roles(title, salary, department_id)
   VALUES('Team Chef', 70000.00, 'NUTRITION' REFERENCES department.name);
+
+SELECT employee.id, employee.first_name, employee.last_name, roles.title, department.name AS department, roles.salary, CONCAT(manager.first_name, ' ', manager.last_name) AS manager
+  FROM employee
+  LEFT JOIN employee manager on manager.id = employee.manager_id
+  INNER JOIN roles ON (roles.id = employee.role_id)
+  INNER JOIN department ON (department.id = roles.department_id)
+  WHERE manager.id = 1
+  ORDER BY employee.id;

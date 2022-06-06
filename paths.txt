@@ -31,3 +31,6 @@ SELECT employee.id, employee.first_name, employee.last_name, roles.title, depart
 Add a department:
 INSERT INTO department(name)
   VALUES(NUTRITION);
+
+INSERT INTO roles(title, salary, department_id)
+  VALUES('Team Chef', 70000.00, 'NUTRITION' REFERENCES department.name);

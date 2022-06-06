@@ -6,7 +6,7 @@ function openingPrompt() {
     inquirer.prompt([
         {
             type: 'list',
-            pageSize:10,
+            pageSize:14,
             name: 'intro',
             message: 'Please select an option:',
             choices:[
@@ -19,6 +19,9 @@ function openingPrompt() {
                 'Add a role',
                 'Add an employee',
                 'Update employee role',
+                'Remove department',
+                'Remove role',
+                'Remove employee',
                 'Exit'
             ]
         }
@@ -52,12 +55,21 @@ function openingPrompt() {
             case 'Update employee role':
                 updateEmployee();
                 break;
+            case 'Remove department':
+                removeDepartment();
+                break;
+            case 'Remove role':
+                removeRole();
+                break;
+            case 'Remove employee':
+                removeEmployee();
+                break;
             case 'Exit':
                 endPrompt();
                 break;
         }
     });
-}
+};
 
 function viewDepartments() {
     const sql = `SELECT department.id, department.name AS Department
@@ -71,7 +83,7 @@ function viewDepartments() {
         console.log(' ');
         console.table(res);
         openingPrompt();
-    })
+    });
 };
 
 function viewRoles() {
@@ -87,7 +99,7 @@ function viewRoles() {
         console.log(' ');
         console.table(res);
         openingPrompt();
-    })
+    });
 };
 
 function viewEmployees() {
@@ -106,8 +118,8 @@ function viewEmployees() {
         console.log(' ');
         console.table(res);
         openingPrompt();
-    })
-}
+    });
+};
 
 function listByDepartment() {
     const sql2 = `SELECT * FROM department`;
@@ -142,8 +154,7 @@ function listByDepartment() {
             });
         });
     });
-    
-}
+};
 
 function addNewDepartment() {
     inquirer.prompt([
@@ -181,7 +192,7 @@ function addRole() {
         departmentList = response.map(departments => ({
             name: departments.name,
             value: departments.id
-        }))
+        }));
         return inquirer.prompt([
             {
                 type: 'input',
@@ -225,8 +236,8 @@ function addRole() {
                 viewRoles();
             });
         });
-    })
-}
+    });
+};
 
 function addEmployee() {
     const sql2 = `SELECT * FROM employee`;
@@ -234,13 +245,13 @@ function addEmployee() {
         employeeList = response.map(employees => ({
             name: employees.first_name.concat(" ", employees.last_name),
             value: employees.id
-        }))
+        }));
         const sql3 = `SELECT * FROM roles`;
         db.query(sql3, (error, response) => {
             roleList = response.map(roles => ({
                 name: roles.title,
                 value: roles.id
-            }))
+            }));
             return inquirer.prompt([
                 {
                     type: 'input',
@@ -300,13 +311,13 @@ function updateEmployee() {
         employeeList = response.map(employees => ({
             name: employees.first_name.concat(" ", employees.last_name),
             value: employees.id
-        }))
+        }));
         const sql3 = `SELECT * FROM roles`;
         db.query(sql3, (error, response) => {
             roleList = response.map(roles => ({
                 name: roles.title,
                 value: roles.id
-            }))
+            }));
             return inquirer.prompt([
                 {
                     type: 'list',
@@ -347,7 +358,7 @@ function viewEmployeeManager() {
         managerList = response.map(employees => ({
             name: employees.first_name.concat(" ", employees.last_name),
             value: employees.id
-        }))
+        }));
         return inquirer.prompt([
             {
                 type: 'list',
@@ -374,10 +385,96 @@ function viewEmployeeManager() {
             });
         });
     });
-}
+};
+
+function removeDepartment() {
+    const sql2 = `SELECT * FROM department`;
+    db.query(sql2, (error, response) => {
+        departmentList = response.map(department => ({
+            name: department.name,
+            value: department.id
+        }));
+        return inquirer.prompt([
+            {
+                type: 'list',
+                name: 'department',
+                message: 'Please enter the department you want to remove:',
+                choices: departmentList
+            }
+        ]).then((answer) => {
+            //departmentList.push(answer.department);
+            const sql = `DELETE FROM department WHERE id = ${answer.department};`
+        
+            db.query(sql, (err, res) => {
+                if (err) {
+                    console.log(err);
+                    return;
+                }
+                viewDepartments();
+            });
+        });
+    });
+};
+
+function removeRole() {
+    const sql2 = `SELECT * FROM roles`;
+    db.query(sql2, (error, response) => {
+        roleList = response.map(roles => ({
+            name: roles.title,
+            value: roles.id
+        }))
+        return inquirer.prompt([
+            {
+                type: 'list',
+                name: 'role',
+                message: 'Please enter the role you want to remove:',
+                choices: roleList
+            }
+        ]).then((answer) => {
+            const sql = `DELETE FROM roles WHERE id = ${answer.role};`
+
+            db.query(sql, (err, res) => {
+                if (err) {
+                    console.log(err);
+                    return;
+                }
+                viewRoles();
+            });
+        });
+    });
+};
+
+function removeEmployee() {
+    const sql2 = `SELECT * FROM employee`;
+    db.query(sql2, (error, response) => {
+        employeeList = response.map(employees => ({
+            name: employees.first_name.concat(" ", employees.last_name),
+            value: employees.id
+        }))
+        return inquirer.prompt([
+            {
+                type: 'list',
+                name: 'employee',
+                message: 'Please select the employee to want to remove:',
+                choices: employeeList
+            }
+        ]).then((answer) => {
+            const sql = `DELETE FROM employee WHERE id = ${answer.employee};`
+
+            db.query(sql, (err, res) => {
+                if (err) {
+                    console.log(err);
+                    return;
+                }
+                viewEmployees();
+            });
+        });
+    });
+};
 
 function endPrompt() {
     process.exit(0);
 };
+
 openingPrompt();
 

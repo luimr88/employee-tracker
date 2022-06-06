@@ -2,6 +2,7 @@ const inquirer = require('inquirer');
 const db = require('./db/connection');
 const cTable = require('console.table');
 
+// Function that displays the prompt menu for employee tracker.
 function openingPrompt() {
     inquirer.prompt([
         {
@@ -25,8 +26,7 @@ function openingPrompt() {
                 'Exit'
             ]
         }
-    ])
-    .then((answer) => {
+    ]).then((answer) => {
         switch(answer.intro) {
             case 'View all departments':
                 viewDepartments();
@@ -71,6 +71,7 @@ function openingPrompt() {
     });
 };
 
+// Function that displays all the departments available.
 function viewDepartments() {
     const sql = `SELECT department.id, department.name AS Department
     FROM department;`
@@ -86,6 +87,7 @@ function viewDepartments() {
     });
 };
 
+// Function that displays all the roles available.
 function viewRoles() {
     const sql = `SELECT roles.id, roles.title AS role, roles.salary, department.name AS department
     FROM roles
@@ -102,6 +104,7 @@ function viewRoles() {
     });
 };
 
+// Function that displays all the employees in the company.
 function viewEmployees() {
     const sql = `SELECT employee.id, employee.first_name, employee.last_name, roles.title AS role, department.name AS department, roles.salary, CONCAT(manager.first_name, ' ', manager.last_name) AS manager
     FROM employee
@@ -121,6 +124,7 @@ function viewEmployees() {
     });
 };
 
+// Function that sorts the employee table by a selected department.
 function listByDepartment() {
     const sql2 = `SELECT * FROM department`;
     db.execute(sql2, (err, response) => {
@@ -156,6 +160,7 @@ function listByDepartment() {
     });
 };
 
+// Function that creates a new department for the company.
 function addNewDepartment() {
     inquirer.prompt([
         {
@@ -172,7 +177,6 @@ function addNewDepartment() {
             }
         }
     ]).then((answer) => {
-        //departmentList.push(answer.department);
         const sql = `INSERT INTO department(name)
         VALUES('${answer.department}');`
     
@@ -186,6 +190,7 @@ function addNewDepartment() {
     });
 };
 
+// Function that adds a new role into the company, including salary and which department it belongs to.
 function addRole() {
     const sql2 = `SELECT * FROM department`;
     db.query(sql2, (error, response) => {
@@ -239,6 +244,7 @@ function addRole() {
     });
 };
 
+// Function that adds an employee to the company.
 function addEmployee() {
     const sql2 = `SELECT * FROM employee`;
     db.query(sql2, (error, response) => {
@@ -305,6 +311,8 @@ function addEmployee() {
     });
 };
 
+/* Function that allows the user to update information of an employee, including the role 
+and if a change of manager is needed. */
 function updateEmployee() {
     const sql2 = `SELECT * FROM employee`;
     db.query(sql2, (error, response) => {
@@ -352,6 +360,7 @@ function updateEmployee() {
     });
 };
 
+// Function that allows the user to view employees based off of who their manager is.
 function viewEmployeeManager() {
     const sql2 = `SELECT * FROM employee`;
     db.query(sql2, (error, response) => {
@@ -387,6 +396,7 @@ function viewEmployeeManager() {
     });
 };
 
+// Function that allows the user to remove a department from the company.
 function removeDepartment() {
     const sql2 = `SELECT * FROM department`;
     db.query(sql2, (error, response) => {
@@ -416,6 +426,7 @@ function removeDepartment() {
     });
 };
 
+// Function that allows the user to remove a role from the company.
 function removeRole() {
     const sql2 = `SELECT * FROM roles`;
     db.query(sql2, (error, response) => {
@@ -444,6 +455,7 @@ function removeRole() {
     });
 };
 
+// Function that allows the user to remove an employee from the company.
 function removeEmployee() {
     const sql2 = `SELECT * FROM employee`;
     db.query(sql2, (error, response) => {
@@ -472,9 +484,11 @@ function removeEmployee() {
     });
 };
 
+// Function that ends the application if the user chooses to.
 function endPrompt() {
     process.exit(0);
 };
 
+// Initializes the menu prompt
 openingPrompt();
 

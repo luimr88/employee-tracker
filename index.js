@@ -14,7 +14,8 @@ function openingPrompt() {
                 'View all employees',
                 'View employees by department',
                 'Add a department',
-                'Add a role' 
+                'Add a role',
+                'Add an employee'
             ]
         }
     ])
@@ -37,6 +38,9 @@ function openingPrompt() {
                 break;
             case 'Add a role':
                 addRole();
+                break;
+            case 'Add an employee':
+                addEmployee();
                 break;
         }
     });
@@ -156,7 +160,7 @@ function addNewDepartment() {
 
 function addRole() {
     const sql2 = `SELECT * FROM department`;
-    db.query(sql2, function (error, response) {
+    db.query(sql2, (error, response) => {
         departmentList = response.map(departments => ({
             name: departments.name,
             value: departments.id
@@ -207,5 +211,71 @@ function addRole() {
     })
 }
 
+function addEmployee() {
+    const sql2 = `SELECT * FROM employee`;
+    db.query(sql2, (error, response) => {
+        employeeList = response.map(employees => ({
+            name: employees.first_name.concat(" ", employees.last_name),
+            value: employees.id
+        }))
+        const sql3 = `SELECT * FROM roles`;
+        db.query(sql3, (error, response) => {
+            roleList = response.map(roles => ({
+                name: roles.title,
+                value: roles.id
+            }))
+            return inquirer.prompt([
+                {
+                    type: 'input',
+                    name: 'first',
+                    message: 'Enter the first name of the employee:',
+                    validate: input => {
+                        if (input) {
+                            return true;
+                        } else {
+                            console.log('Please enter a first name!');
+                            return false
+                        }
+                    }
+                },
+                {
+                    type: 'input',
+                    name: 'last',
+                    message: 'Enter the last name of the employee:',
+                    validate: input => {
+                        if (input) {
+                            return true;
+                        } else {
+                            console.log('Please enter a last name!');
+                            return false
+                        }
+                    }
+                },
+                {
+                    type: 'list',
+                    name: 'role',
+                    message: 'What role does the employee have?',
+                    choices: roleList
+                },
+                {
+                    type: 'list',
+                    name: 'manager',
+                    message: 'Who is the manager of the employee?',
+                    choices: employeeList
+                }
+            ]).then((answers) => {
+                const sql = `INSERT INTO employee SET first_name='${answers.first}', last_name= '${answers.last}', role_id= ${answers.role}, manager_id=${answers.manager};`
+                db.query(sql, (err, res) => {
+                    if (err) {
+                        console.log(err);
+                        return;
+                    }
+                    viewEmployees();
+                });
+            });
+        })
+        
+    })
+}
 openingPrompt();
 

@@ -12,7 +12,8 @@ const db = mysql.createConnection(
         database: 'employees'
     },
     console.log('Connected to employee database.'),
-    console.log(figlet.textSync('Employee Tracker'))
+    console.log(figlet.textSync('Employee Tracker')),
+    console.log('=====================================================================================')
 );
 
 module.exports = db;

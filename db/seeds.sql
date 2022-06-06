@@ -1,9 +1,9 @@
 INSERT INTO department (name)
 VALUES
-    ('DRIVERS'),
-    ('ENGINEERING'),
-    ('MARKETING'),
-    ('LOGISTICS');
+    ('Drivers'),
+    ('Engineering'),
+    ('Marketing'),
+    ('Logistics');
     
 
 INSERT INTO roles (title, salary, department_id)
@@ -33,5 +33,5 @@ VALUES
     ('Marie', 'Coolidge', 6, 4),
     ('Johana', 'Tortelli', 7, 1),
     ('Kyle', 'Lawrence', 8, 9),
-    ('Luke', 'Rezland', 9, NULL),
+    ('Luke', 'Rezland', 9, 1),
     ('Kevin', 'Peters', 10, 10);

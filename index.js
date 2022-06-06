@@ -486,6 +486,7 @@ function removeEmployee() {
 
 // Function that ends the application if the user chooses to.
 function endPrompt() {
+    console.log('Thank you for using the Employee Tracker application. Goodbye.')
     process.exit(0);
 };
 
